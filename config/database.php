@@ -3,7 +3,7 @@ class database{
  
 	var $host = "localhost";
 	var $username = "root";
-	var $password = "root";
+	var $password = "";
 	var $database = "formulir";
    var $koneksi = "";
    
@@ -39,6 +39,38 @@ class database{
 			$hasil[] = $row;
 		}
 		return $hasil;
+   }
+
+   function getUser()
+	{
+		$data = mysqli_query($this->koneksi,"SELECT * FROM user");
+		while($row = mysqli_fetch_array($data)){
+			$hasil[] = $row;
+		}
+		return $hasil;
+   }
+
+   function insertAssesment($data,$resultId){
+   		mysqli_query($this->koneksi,"INSERT INTO `assessment` (`id`, `ass_result_id`, `ass_question_id`, `ass_answer`, `ass_created`) VALUES ".$data);
+   		$result = mysqli_query($this->koneksi,"SELECT * FROM assessment WHERE ass_result_id = ".$resultId);
+   		while($row = mysqli_fetch_array($result)){
+			$hasil[] = $row;
+		}
+
+   		return $hasil;
+   }
+
+   function insertResult($data){
+   		mysqli_query($this->koneksi,"INSERT INTO `result` (`id`, `res_code`, `res_usr_id`, `res_created`) VALUES (NULL, NULL, ".$data.", current_timestamp())");
+   }
+
+   function getLastResult(){
+   		$result = mysqli_query($this->koneksi,"SELECT * FROM result ORDER BY ID DESC LIMIT 1");
+   		while($row = mysqli_fetch_array($result)){
+			$hasil[] = $row;
+		}
+
+   		return $hasil;
    }
 
 //    INSERT INTO `e_store`.`products`(

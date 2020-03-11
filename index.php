@@ -2,10 +2,8 @@
 require_once('config/database.php');
 $db = new database();
 $param_category = $db->getRelation();
-echo '<pre>';
-print_r($param_category);
-echo '</pre>';
-// die();
+$getUser = $db->getUser();
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -26,10 +24,17 @@ echo '</pre>';
 	<div class="container">
 		<div class="jumbotron">
 			<h1 class="display-4">Hello, world!</h1>
-			<p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra
-				attention to featured content or information.</p>
+			<p class="lead">Belum dikasih validasi dan lain2, mohon diisi semua. :)</p>
 		</div>
-		<form class="form-horizontal" action="/action_page.php">
+		<form class="form-horizontal" method="POST" action="save.php">
+			<h1>PILIH USER DULU</h1>
+			<?php
+				foreach( $getUser as $item ){
+					echo '<div class="radio">
+							  <label><input type="radio" value="'.$item['id'].'" name="user"> '.$item['usr_name'].'</label>
+							</div>';
+				}
+			?>
 			<?php
 				$same = '';
 				foreach($param_category as $item){
@@ -40,24 +45,25 @@ echo '</pre>';
 					<div class="col-sm-10">
 						<?php if($item['quest_type'] == "text"){ ?>
 							<?php foreach( json_decode($item['quest_instrument']) as $val ){ ?>
-								<!-- <div class="row"> -->
+								<div style="display: inline-flex;">
 									<label class="col-sm-4"><?php echo $val->question; ?></label>
-									<div class="col-sm-4"><input type="text" class="form-control" name="<?php echo $val->name; ?>"></div>
+									<div class="col-sm-4"><input type="text" class="form-control" name="req[<?php echo $item['id']; ?>][<?php echo $val->name; ?>]"></div>
 									<label class="col-sm-4"><?php echo $val->unit; ?></label>
-								<!-- </div> -->
+								</div>
+								<br>
 							<?php } ?>
 
 						<?php }elseif($item['quest_type'] == "radio"){ ?>
 							<?php foreach( json_decode($item['quest_instrument'])->options as $val ){ ?>
 								<div class="radio">
-								  <label><input type="radio" name="<?php echo json_decode($item['quest_instrument'])->name ?>"> <?php echo $val ?></label>
+								  <label><input type="radio" value="<?php echo $val ?>" name="req[<?php echo $item['id']; ?>][<?php echo json_decode($item['quest_instrument'])->name ?>]"> <?php echo $val ?></label>
 								</div>
 							<?php } ?>
 
 						<?php }elseif($item['quest_type'] == "checkbox"){ ?>
 							<?php foreach( json_decode($item['quest_instrument'])->options as $val ){ ?>
 							<div class="checkbox">
-							  <label><input type="checkbox" name="<?php echo json_decode($item['quest_instrument'])->name; ?>[]" value=""> <?php echo $val ?></label>
+							  <label><input type="checkbox" value="<?php echo $val ?>" name="req[<?php echo $item['id']; ?>][<?php echo json_decode($item['quest_instrument'])->name ?>][]" value=""> <?php echo $val ?></label>
 							</div>
 							<?php } ?>
 
@@ -76,7 +82,7 @@ echo '</pre>';
 										<?php foreach( $val as $v ){ ?>
 										<?php 
 											if($v === end($val)) {
-												echo "<td><input type='text' class='form-control' name='".json_decode($item['quest_instrument'])->name."[]'></td>";
+												echo "<td><input type='text' class='form-control' name='req[".$item['id']."][".json_decode($item['quest_instrument'])->name."][]'></td>";
 											}else{
 												echo "<td>".$v."</td>";
 											}

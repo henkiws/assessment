@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.5
+-- version 4.9.0.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:3306
--- Generation Time: Mar 11, 2020 at 08:25 AM
--- Server version: 5.7.24
--- PHP Version: 7.2.11
+-- Host: 127.0.0.1
+-- Generation Time: Mar 11, 2020 at 01:54 PM
+-- Server version: 10.4.6-MariaDB
+-- PHP Version: 7.3.8
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -32,9 +32,30 @@ CREATE TABLE `assessment` (
   `id` int(11) NOT NULL,
   `ass_result_id` int(11) NOT NULL,
   `ass_question_id` int(11) NOT NULL,
-  `ass_answer` json NOT NULL,
-  `ass_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `ass_answer` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL
+) ;
+
+--
+-- Dumping data for table `assessment`
+--
+
+INSERT INTO `assessment` (`id`, `ass_result_id`, `ass_question_id`, `ass_answer`, `ass_created`) VALUES
+(1, 1, 1, '{\"td\":\"1\",\"s\":\"2\",\"c\":\"3\",\"p\":\"4\",\"nadi\":\"5\"}', '2020-03-11 12:50:57'),
+(2, 1, 2, '{\"abgar_score\":\"11\",\"mekonium\":\"22\",\"ikterus\":\"33\"}', '2020-03-11 12:50:57'),
+(3, 1, 3, '{\"gol_darah\":\"A\"}', '2020-03-11 12:50:57'),
+(4, 1, 4, '{\"riwayat_imunisasi\":[\"CAMPAK\",\"DPT\"]}', '2020-03-11 12:50:57'),
+(5, 1, 5, '{\"gejala\":[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\"]}', '2020-03-11 12:50:57'),
+(6, 1, 6, '{\"pendidikan\":\"S1\"}', '2020-03-11 12:50:57'),
+(7, 1, 7, '{\"kemampuan_kognitif\":\"Ada masalah\"}', '2020-03-11 12:50:57'),
+(8, 1, 8, '{\"motovasi_menerima_edukasi\":\"Ada masalah\"}', '2020-03-11 12:50:57'),
+(9, 2, 1, '{\"td\":\"1\",\"s\":\"2\",\"c\":\"3\",\"p\":\"4\",\"nadi\":\"5\"}', '2020-03-11 12:51:59'),
+(10, 2, 2, '{\"abgar_score\":\"11\",\"mekonium\":\"22\",\"ikterus\":\"33\"}', '2020-03-11 12:51:59'),
+(11, 2, 3, '{\"gol_darah\":\"A\"}', '2020-03-11 12:51:59'),
+(12, 2, 4, '{\"riwayat_imunisasi\":[\"CAMPAK\",\"DPT\"]}', '2020-03-11 12:51:59'),
+(13, 2, 5, '{\"gejala\":[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\"]}', '2020-03-11 12:51:59'),
+(14, 2, 6, '{\"pendidikan\":\"S1\"}', '2020-03-11 12:51:59'),
+(15, 2, 7, '{\"kemampuan_kognitif\":\"Ada masalah\"}', '2020-03-11 12:51:59'),
+(16, 2, 8, '{\"motovasi_menerima_edukasi\":\"Ada masalah\"}', '2020-03-11 12:51:59');
 
 -- --------------------------------------------------------
 
@@ -45,7 +66,7 @@ CREATE TABLE `assessment` (
 CREATE TABLE `param_category` (
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `status` smallint(1) NOT NULL DEFAULT '0' COMMENT '1: true; 0:false'
+  `status` smallint(1) NOT NULL DEFAULT 0 COMMENT '1: true; 0:false'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -69,9 +90,8 @@ CREATE TABLE `question` (
   `param_cat_id` int(11) NOT NULL,
   `quest_title` varchar(255) NOT NULL,
   `quest_type` char(50) NOT NULL,
-  `quest_instrument` json NOT NULL,
-  `quest_status` tinyint(1) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `quest_instrument` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL
+) ;
 
 --
 -- Dumping data for table `question`
@@ -95,10 +115,18 @@ INSERT INTO `question` (`id`, `param_cat_id`, `quest_title`, `quest_type`, `ques
 
 CREATE TABLE `result` (
   `id` int(11) NOT NULL,
-  `res_code` char(50) NOT NULL,
+  `res_code` char(50) DEFAULT NULL,
   `res_usr_id` int(1) NOT NULL,
-  `res_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `res_created` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `result`
+--
+
+INSERT INTO `result` (`id`, `res_code`, `res_usr_id`, `res_created`) VALUES
+(1, NULL, 1, '2020-03-11 12:50:57'),
+(2, NULL, 1, '2020-03-11 12:51:59');
 
 -- --------------------------------------------------------
 
@@ -125,9 +153,9 @@ INSERT INTO `user` (`id`, `usr_name`, `usr_alamat`) VALUES
 --
 
 --
--- Indexes for table `question`
+-- Indexes for table `param_category`
 --
-ALTER TABLE `question`
+ALTER TABLE `param_category`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -147,21 +175,27 @@ ALTER TABLE `user`
 --
 
 --
+-- AUTO_INCREMENT for table `assessment`
+--
+ALTER TABLE `assessment`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `param_category`
+--
+ALTER TABLE `param_category`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `question`
 --
 ALTER TABLE `question`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `result`
 --
 ALTER TABLE `result`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `user`
---
-ALTER TABLE `user`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 COMMIT;
 
