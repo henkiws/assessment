@@ -39,20 +39,25 @@ echo '</pre>';
 					<label class="control-label col-sm-2" for="email"><?php echo $item['quest_title'] ?></label>
 					<div class="col-sm-10">
 						<?php if($item['quest_type'] == "text"){ ?>
-
-							<input type="email" class="form-control" id="email" placeholder="Enter email">
+							<?php foreach( json_decode($item['quest_instrument']) as $val ){ ?>
+								<!-- <div class="row"> -->
+									<label class="col-sm-4"><?php echo $val->question; ?></label>
+									<div class="col-sm-4"><input type="text" class="form-control" name="<?php echo $val->name; ?>"></div>
+									<label class="col-sm-4"><?php echo $val->unit; ?></label>
+								<!-- </div> -->
+							<?php } ?>
 
 						<?php }elseif($item['quest_type'] == "radio"){ ?>
 							<?php foreach( json_decode($item['quest_instrument'])->options as $val ){ ?>
 								<div class="radio">
-								  <label><input type="radio" name="<?php echo str_replace(' ', '_', $item['quest_title']) ?>"> <?php echo $val ?></label>
+								  <label><input type="radio" name="<?php echo json_decode($item['quest_instrument'])->name ?>"> <?php echo $val ?></label>
 								</div>
 							<?php } ?>
 
 						<?php }elseif($item['quest_type'] == "checkbox"){ ?>
 							<?php foreach( json_decode($item['quest_instrument'])->options as $val ){ ?>
 							<div class="checkbox">
-							  <label><input type="checkbox" name="<?php echo str_replace(' ', '_', $item['quest_title']) ?>" value=""> <?php echo $val ?></label>
+							  <label><input type="checkbox" name="<?php echo json_decode($item['quest_instrument'])->name; ?>[]" value=""> <?php echo $val ?></label>
 							</div>
 							<?php } ?>
 
@@ -71,7 +76,7 @@ echo '</pre>';
 										<?php foreach( $val as $v ){ ?>
 										<?php 
 											if($v === end($val)) {
-												echo "<td><input type='text' class='form-control'></td>";
+												echo "<td><input type='text' class='form-control' name='".json_decode($item['quest_instrument'])->name."[]'></td>";
 											}else{
 												echo "<td>".$v."</td>";
 											}
