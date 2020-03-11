@@ -1,7 +1,11 @@
 <?php 	
 require_once('config/database.php');
 $db = new database();
-$data = $db->getDataAll('products');
+$param_category = $db->getRelation();
+echo '<pre>';
+print_r($param_category);
+echo '</pre>';
+// die();
 ?>
 <!doctype html>
 <html lang="en">
@@ -26,55 +30,65 @@ $data = $db->getDataAll('products');
 				attention to featured content or information.</p>
 		</div>
 		<form class="form-horizontal" action="/action_page.php">
-			<div class="form-group">
-				<label class="control-label col-sm-2" for="email">Email:</label>
-				<div class="col-sm-10">
-					<input type="email" class="form-control" id="email" placeholder="Enter email">
+			<?php
+				$same = '';
+				foreach($param_category as $item){
+				echo ($same != $item["name"]) ? '<hr><h1>'.$item["name"].'</h1>' : '';
+			?>
+				<div class="row form-group">
+					<label class="control-label col-sm-2" for="email"><?php echo $item['quest_title'] ?></label>
+					<div class="col-sm-10">
+						<?php if($item['quest_type'] == "text"){ ?>
+
+							<input type="email" class="form-control" id="email" placeholder="Enter email">
+
+						<?php }elseif($item['quest_type'] == "radio"){ ?>
+							<?php foreach( json_decode($item['quest_instrument'])->options as $val ){ ?>
+								<div class="radio">
+								  <label><input type="radio" name="<?php echo str_replace(' ', '_', $item['quest_title']) ?>"> <?php echo $val ?></label>
+								</div>
+							<?php } ?>
+
+						<?php }elseif($item['quest_type'] == "checkbox"){ ?>
+							<?php foreach( json_decode($item['quest_instrument'])->options as $val ){ ?>
+							<div class="checkbox">
+							  <label><input type="checkbox" name="<?php echo str_replace(' ', '_', $item['quest_title']) ?>" value=""> <?php echo $val ?></label>
+							</div>
+							<?php } ?>
+
+						<?php }elseif($item['quest_type'] == "table"){ ?>
+							<table class="table">
+								<thead>
+									<tr>
+									<?php foreach( json_decode($item['quest_instrument'])->header as $val ){ ?>
+										<th><?php echo $val ?></th>
+									<?php } ?>
+									</tr>
+								</thead>
+								<tbody>
+									<?php foreach( json_decode($item['quest_instrument'])->row as $val ){ ?>
+									<tr>
+										<?php foreach( $val as $v ){ ?>
+										<?php 
+											if($v === end($val)) {
+												echo "<td><input type='text' class='form-control'></td>";
+											}else{
+												echo "<td>".$v."</td>";
+											}
+										?>
+										<?php } ?>
+									</tr>
+									<?php } ?>
+								</tbody>
+							</table>
+						<?php } ?>
+					</div>
 				</div>
-			</div>
-			<div class="form-group">
-				<label class="control-label col-sm-2" for="pwd">Password:</label>
-				<div class="col-sm-10">
-					<input type="password" class="form-control" id="pwd" placeholder="Enter password">
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="control-label col-sm-2" for="pwd">Password:</label>
-				<div class="col-sm-10">
-					<input type="password" class="form-control" id="pwd" placeholder="Enter password">
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="control-label col-sm-2" for="pwd">Password:</label>
-				<div class="col-sm-10">
-					<table class="table">
-						<thead>
-							<tr>
-								<th>Firstname</th>
-								<th>Lastname</th>
-								<th>Email</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>John</td>
-								<td>Doe</td>
-								<td>john@example.com</td>
-							</tr>
-							<tr>
-								<td>Mary</td>
-								<td>Moe</td>
-								<td>mary@example.com</td>
-							</tr>
-							<tr>
-								<td>July</td>
-								<td>Dooley</td>
-								<td>july@example.com</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
+
+			<?php 
+			$same = $item['name'];
+				} 
+			?>
 			<div class="form-group">
 				<div class="col-sm-offset-2 col-sm-10">
 					<button type="submit" class="btn btn-primary">Submit</button>

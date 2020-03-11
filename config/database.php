@@ -3,8 +3,8 @@ class database{
  
 	var $host = "localhost";
 	var $username = "root";
-	var $password = "root";
-	var $database = "test";
+	var $password = "";
+	var $database = "formulir";
    var $koneksi = "";
    
 	function __construct(){
@@ -26,6 +26,15 @@ class database{
    function getDataWhere($table,$column,$operator,$where)
    {
       $data = mysqli_query($this->koneksi,"SELECT * FROM ".$table." WHERE ".$column." ".$operator." ".$where);
+		while($row = mysqli_fetch_array($data)){
+			$hasil[] = $row;
+		}
+		return $hasil;
+   }
+
+   function getRelation()
+	{
+		$data = mysqli_query($this->koneksi,"SELECT * FROM param_category a, question b WHERE a.id = b.param_cat_id ORDER BY b.param_cat_id");
 		while($row = mysqli_fetch_array($data)){
 			$hasil[] = $row;
 		}
